@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/matryer/filedb"
@@ -67,7 +68,12 @@ func main() {
 			return
 		}
 		for _, p := range args[1:] {
-			path := &path{Path: p, Hash: "まだアーカイブされていません"}
+			absPath, err := filepath.Abs(p)
+			if err != nil {
+				fatalErr = err
+				return
+			}
+			path := &path{Path: absPath, Hash: "まだアーカイブされていません"}
 			if err := col.InsertJSON(path); err != nil {
 				fatalErr = err
 				return
